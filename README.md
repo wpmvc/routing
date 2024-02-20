@@ -1,18 +1,18 @@
 <p align="center">
-<a href="https://packagist.org/packages/waxframework/routing"><img src="https://img.shields.io/packagist/dt/waxframework/routing" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/waxframework/routing"><img src="https://img.shields.io/packagist/v/waxframework/routing" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/waxframework/routing"><img src="https://img.shields.io/packagist/l/waxframework/routing" alt="License"></a>
+<a href="https://packagist.org/packages/wpmvc/routing"><img src="https://img.shields.io/packagist/dt/wpmvc/routing" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/wpmvc/routing"><img src="https://img.shields.io/packagist/v/wpmvc/routing" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/wpmvc/routing"><img src="https://img.shields.io/packagist/l/wpmvc/routing" alt="License"></a>
 </p>
 
-# About WaxFramework Routing
+# About WpMVC Routing
 
-WaxFramework Routing is a powerful routing system for WordPress plugins that is similar to the popular PHP framework Laravel. This package makes use of the WordPress REST route system and includes its own custom route system, known as the `Ajax Route`.
+WpMVC Routing is a powerful routing system for WordPress plugins that is similar to the popular PHP framework Laravel. This package makes use of the WordPress REST route system and includes its own custom route system, known as the `Ajax Route`.
 
-One of the key features of WaxFramework Routing is its support for middleware. Middleware allows you to perform additional actions before each request.
+One of the key features of WpMVC Routing is its support for middleware. Middleware allows you to perform additional actions before each request.
 
-By using WaxFramework Routing in your WordPress plugin, you can easily create custom routes and middleware to handle a wide variety of requests, including AJAX requests, with ease. This makes it an excellent tool for developing modern and dynamic WordPress plugins that require advanced routing capabilities and additional security measures.
+By using WpMVC Routing in your WordPress plugin, you can easily create custom routes and middleware to handle a wide variety of requests, including AJAX requests, with ease. This makes it an excellent tool for developing modern and dynamic WordPress plugins that require advanced routing capabilities and additional security measures.
 
-- [About WaxFramework Routing](#about-waxframework-routing)
+- [About WpMVC Routing](#about-wpmvc-routing)
 	- [Requirement](#requirement)
 		- [Methods structure](#methods-structure)
 	- [Installation](#installation)
@@ -33,12 +33,12 @@ By using WaxFramework Routing in your WordPress plugin, you can easily create cu
 
 ## Requirement
 
-WaxFramework routing requires a dependency injection (DI) container. We do not use any hard-coded library, so you can choose to use any DI library you prefer. However, it is important to follow our DI structure, which includes having the `set`, `get`, and `call` methods in your DI container.
+WpMVC routing requires a dependency injection (DI) container. We do not use any hard-coded library, so you can choose to use any DI library you prefer. However, it is important to follow our DI structure, which includes having the `set`, `get`, and `call` methods in your DI container.
 
 We recommend using [PHP-DI](https://php-di.org/) as it already has these 3 methods implemented in the package.
 
 ### Methods structure
-Here is the structure of the methods that your DI container should have in order to work with WaxFramework routing:
+Here is the structure of the methods that your DI container should have in order to work with WpMVC routing:
 
 1. `set` method
 
@@ -81,7 +81,7 @@ Here is the structure of the methods that your DI container should have in order
 ## Installation
 
 ```
-composer require waxframework/routing
+composer require wpmvc/routing
 ```
 ## Configuration
 1. Your plugin must include a `routes` folder. This folder will contain all of your plugin's route files.
@@ -109,9 +109,9 @@ composer require waxframework/routing
     namespace MyPlugin\Providers;
 
     use MyPlugin\Container;
-    use WaxFramework\Routing\Providers\RouteServiceProvider as WaxRouteServiceProvider;
+    use WpMVC\Routing\Providers\RouteServiceProvider as WpMVCRouteServiceProvider;
 
-    class RouteServiceProvider extends WaxRouteServiceProvider {
+    class RouteServiceProvider extends WpMVCRouteServiceProvider {
 
         public function boot() {
 
@@ -156,7 +156,7 @@ composer require waxframework/routing
 		$route_service_provider->boot();
 	});
 	```
-That's it! Your plugin is now configured with WaxFramework Routing system, and you can start creating your own routes and handling requests with ease.
+That's it! Your plugin is now configured with WpMVC Routing system, and you can start creating your own routes and handling requests with ease.
 
 ## Register Routes In Route File
 
@@ -164,12 +164,12 @@ That's it! Your plugin is now configured with WaxFramework Routing system, and y
 `routes/rest/api.php`
 
 #### Write your first route
-To create your first RESTful route in WordPress, you can use the `Route` and `Response` classes from the `WaxFramework\Routing` namespace, as shown below:
+To create your first RESTful route in WordPress, you can use the `Route` and `Response` classes from the `WpMVC\Routing` namespace, as shown below:
 ```php
 <?php
 
-use WaxFramework\Routing\Route;
-use WaxFramework\Routing\Response;
+use WpMVC\Routing\Route;
+use WpMVC\Routing\Response;
 use WP_REST_Request;
 
 defined('ABSPATH') || exit;
@@ -251,7 +251,7 @@ Registering an AJAX route is similar to registering a REST route. Instead of usi
 
 Here is an example of registering an AJAX route to get a user's data:
 ```php
-use WaxFramework\Routing\Ajax;
+use WpMVC\Routing\Ajax;
 use WP_REST_Request;
 
 Ajax::get('user', function(WP_REST_Request $wp_rest_request) {
@@ -259,7 +259,7 @@ Ajax::get('user', function(WP_REST_Request $wp_rest_request) {
 });
 ```
 
-To route to `WordPress admin`, your route must use a middleware with the name `admin`. If you apply this middleware to your Ajax route, WaxFramework will load the WP admin code. Check out the [Middleware Docs](#middleware) to see the middleware use process.
+To route to `WordPress admin`, your route must use a middleware with the name `admin`. If you apply this middleware to your Ajax route, WpMVC will load the WP admin code. Check out the [Middleware Docs](#middleware) to see the middleware use process.
 
 ### Get Api Endpoint
 
@@ -293,7 +293,7 @@ Here is an example of creating a middleware class named `EnsureIsUserAdmin`:
 
 namespace MyPlugin\App\Http\Middleware;
 
-use WaxFramework\Routing\Contracts\Middleware;
+use WpMVC\Routing\Contracts\Middleware;
 use WP_REST_Request;
 
 class EnsureIsUserAdmin implements Middleware
@@ -330,4 +330,4 @@ Route::get('/admin',  [AdminController::class, 'index'], ['admin']);
 
 ## License
 
-WaxFramework Routing is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+WpMVC Routing is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

@@ -1,11 +1,11 @@
 <?php
 
-namespace WaxFramework\Routing\Providers;
+namespace WpMVC\Routing\Providers;
 
-use WaxFramework\Routing\Response;
-use WaxFramework\Routing\DataBinder;
-use WaxFramework\Routing\Ajax;
-use WaxFramework\Routing\Middleware;
+use WpMVC\Routing\Response;
+use WpMVC\Routing\DataBinder;
+use WpMVC\Routing\Ajax;
+use WpMVC\Routing\Middleware;
 use Wp;
 
 abstract class RouteServiceProvider

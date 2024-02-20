@@ -1,6 +1,6 @@
 <?php
 
-namespace WaxFramework\Routing\Contracts;
+namespace WpMVC\Routing\Contracts;
 
 use WP_REST_Request;
 use WP_Error;

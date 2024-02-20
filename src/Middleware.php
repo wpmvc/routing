@@ -1,9 +1,9 @@
 <?php
 
-namespace WaxFramework\Routing;
+namespace WpMVC\Routing;
 
-use WaxFramework\Routing\Providers\RouteServiceProvider;
-use WaxFramework\Routing\Contracts\Middleware as MiddlewareContract;
+use WpMVC\Routing\Providers\RouteServiceProvider;
+use WpMVC\Routing\Contracts\Middleware as MiddlewareContract;
 use WP_Error;
 
 class Middleware {

@@ -1,11 +1,11 @@
 {
-    "name": "waxframework/routing",
+    "name": "wpmvc/routing",
     "type": "library",
     "license": "MIT",
     "version": "1.0.0",
     "autoload": {
         "psr-4": {
-            "WaxFramework\\Routing\\": "src/"
+            "WpMVC\\Routing\\": "src/"
         }
     },
     "authors": [

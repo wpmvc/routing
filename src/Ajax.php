@@ -1,8 +1,8 @@
 <?php
 
-namespace WaxFramework\Routing;
+namespace WpMVC\Routing;
 
-use WaxFramework\Routing\Providers\RouteServiceProvider;
+use WpMVC\Routing\Providers\RouteServiceProvider;
 use WP_REST_Request;
 use WP_REST_Server;
 use WP;

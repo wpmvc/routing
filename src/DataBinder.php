@@ -1,6 +1,6 @@
 <?php
 
-namespace WaxFramework\Routing;
+namespace WpMVC\Routing;
 
 class DataBinder
 {
