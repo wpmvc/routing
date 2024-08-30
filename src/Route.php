@@ -5,6 +5,7 @@ namespace WpMVC\Routing;
 defined( 'ABSPATH' ) || exit;
 
 use WpMVC\Routing\Providers\RouteServiceProvider;
+use WpMVC\Exceptions\Exception;
 use WP_Error;
 use WP_HTTP_Response;
 use WP_REST_Request;
@@ -131,23 +132,51 @@ class Route
     }
 
     protected static function callback( $callback ) {
-        $response = RouteServiceProvider::$container->call( $callback );
+        try {
+            $response = RouteServiceProvider::$container->call( $callback );
 
-        if ( ! is_array( $response ) ) {
-            exit;
-        }
+            if ( ! is_array( $response ) ) {
+                exit;
+            }
 
-        $status_code = intval( $response['status_code'] );
-        static::set_status_code( $status_code );
+            $status_code = intval( $response['status_code'] );
+            static::set_status_code( $status_code );
 
-        $response = $response['data'];
+            $response = $response['data'];
 
-        if ( $status_code > 399 && 600 > $status_code ) {
-            $response['data']['status'] = $status_code;
+            if ( $status_code > 399 && 600 > $status_code ) {
+                $response['data']['status'] = $status_code;
+                return $response;
+            }
+
+            return $response;
+        } catch ( Exception $ex ) {
+            $status_code = intval( $ex->getCode() );
+            static::set_status_code( $status_code );
+
+            $response = [
+                'data' => [
+                    'status_code' => $status_code
+                ]
+            ];
+                
+            $message = $ex->getMessage();
+
+            if ( ! empty( $message ) ) {
+                $response['message'] = $message;
+            } else {
+                $messages = $ex->get_messages();
+
+                if ( ! empty( $messages ) ) {
+                    $response['messages'] = $messages;
+                } else {
+                    $response['message'] = 'Something was wrong.';
+                }
+
+            }
+
             return $response;
         }
-
-        return $response;
     }
 
     protected static function set_status_code( int $status_code ) {
