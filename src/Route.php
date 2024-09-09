@@ -5,7 +5,7 @@ namespace WpMVC\Routing;
 defined( 'ABSPATH' ) || exit;
 
 use WpMVC\Routing\Providers\RouteServiceProvider;
-use WpMVC\Exceptions\Exception;
+use Exception;
 use WP_Error;
 use WP_HTTP_Response;
 use WP_REST_Request;
@@ -159,22 +159,23 @@ class Route
                     'status_code' => $status_code
                 ]
             ];
-                
+
             $message = $ex->getMessage();
 
             if ( ! empty( $message ) ) {
                 $response['message'] = $message;
             } else {
-                $messages = $ex->get_messages();
-
-                if ( ! empty( $messages ) ) {
-                    $response['messages'] = $messages;
+                if ( method_exists( $ex, 'get_messages' ) ) {
+                    $messages = $ex->get_messages();
+                    if ( ! empty( $messages ) ) {
+                        $response['messages'] = $messages;
+                    } else {
+                        $response['message'] = 'Something went wrong.';
+                    }
                 } else {
-                    $response['message'] = 'Something was wrong.';
+                    $response['message'] = 'Something went wrong.';
                 }
-
             }
-
             return $response;
         }
     }
