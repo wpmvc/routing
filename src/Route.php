@@ -119,8 +119,15 @@ class Route
 
                         return static::callback( $callback );
                     },
-                    'permission_callback' => function() use( $middleware ) {
+                    'permission_callback' => function() use( $middleware, $full_route ) {
                         $permission = Middleware::is_user_allowed( $middleware );
+
+                        $properties = RouteServiceProvider::get_properties();
+
+                        if ( ! empty( $properties['rest_permission_filter_hook'] ) ) {
+                            $permission = apply_filters( $properties['rest_permission_filter_hook'], $permission, $middleware, $full_route );
+                        }
+
                         if ( $permission instanceof WP_Error ) {
                             static::set_status_code( $permission->get_error_code() );
                         }

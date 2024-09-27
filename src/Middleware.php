@@ -17,14 +17,15 @@ class Middleware {
 
     /**
      * @param array $middleware
-     * @return boolean|WP_Error
+     * @param bool $default_permission
+     * @return bool|WP_Error
      */
-    public static function is_user_allowed( array $middleware ) {
+    public static function is_user_allowed( array $middleware, bool $default_permission = true ) {
         $container = RouteServiceProvider::$container;
 
         foreach ( $middleware as $middleware_name ) {
             if ( ! array_key_exists( $middleware_name, static::$middleware ) ) {
-                return false;
+                continue;
             }
 
             $current_middleware = static::$middleware[$middleware_name];
@@ -41,6 +42,6 @@ class Middleware {
             }
         }
         
-        return true;
+        return $default_permission;
     }
 }
