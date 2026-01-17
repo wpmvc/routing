@@ -33,9 +33,9 @@ By using WpMVC Routing in your WordPress plugin, you can easily create custom ro
 
 ## Requirement
 
-WpMVC routing requires a dependency injection (DI) container. We do not use any hard-coded library, so you can choose to use any DI library you prefer. However, it is important to follow our DI structure, which includes having the `set`, `get`, and `call` methods in your DI container.
+WpMVC routing requires a dependency injection (DI) container. We do not use any hard-coded library, so you can choose to use any DI library you prefer. However, it is important to follow our DI structure, which includes having the `set` and `get` methods in your DI container.
 
-We recommend using [PHP-DI](https://php-di.org/) as it already has these 3 methods implemented in the package.
+We recommend using [symfony/dependency-injection](https://symfony.com/doc/current/components/dependency_injection.html) as it already has these 3 methods implemented in the package.
 
 ### Methods structure
 Here is the structure of the methods that your DI container should have in order to work with WpMVC routing:
@@ -64,19 +64,6 @@ Here is the structure of the methods that your DI container should have in order
      * @return mixed|T
      */
     public function get($name) {}
-	```
-3. `call` method
-	```php
-	 /**
-     * Call the given function using the given parameters.
-     *
-     * Missing parameters will be resolved from the container.
-     *
-     * @param callable $callable   Function to call.
-	 * 
-     * @return mixed Result of the function.
-     */
-    public function call($callable) {}
 	```
 ## Installation
 
@@ -119,13 +106,6 @@ composer require wpmvc/routing
              * Set Di Container
              */
             parent::$container = new Container;
-
-            /**
-             * OR you use PHP-Container 
-             * Uses https://php-di.org/doc/getting-started.html
-             */
-            // parent::$container = new DI\Container();
-
 
             /**
              * Set required properties
