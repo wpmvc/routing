@@ -2,3 +2,4 @@
 phpcs-report.xml
 .DS_Store
 composer.lock
+.phpunit.result.cache
