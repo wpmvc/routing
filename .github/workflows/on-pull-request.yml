@@ -68,3 +68,9 @@ jobs:
 
       - name: Run PHPUnit tests
         run: composer test
+
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: '**/phpunit-report.xml'
