@@ -88,7 +88,7 @@ class Pipeline
                     return $pipe( $passable, $stack );
                 }
 
-                $container  = Providers\RouteServiceProvider::$container;
+                $container  = Providers\RouteServiceProvider::get_container();
                 $middleware = $container->get( $pipe );
 
                 return $container->call( [$middleware, 'handle'], [$passable, $stack] );

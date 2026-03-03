@@ -393,7 +393,7 @@ Here is the structure of the methods that your DI container should have in order
 
     namespace MyPlugin\Providers;
 
-    use MyPlugin\Container;
+    use WpMVC\Container\Container;
     use WpMVC\Routing\Providers\RouteServiceProvider as WpMVCRouteServiceProvider;
 
     class RouteServiceProvider extends WpMVCRouteServiceProvider {
@@ -403,12 +403,12 @@ Here is the structure of the methods that your DI container should have in order
             /**
              * Set Di Container
              */
-            parent::$container = new Container;
+            static::set_container( new Container );
 
             /**
              * Set required properties
              */
-            parent::$properties = [
+            static::set_properties( [
                 'rest'       => [
                     'namespace' => 'myplugin',
                     'versions'  => ['v1', 'v2']
@@ -417,35 +417,17 @@ Here is the structure of the methods that your DI container should have in order
                     'namespace' => 'myplugin',
                     'versions'  => []
                 ],
+                // Global hooks (optional)
+                'rest_response_action_hook'   => 'myplugin_rest_response_action',
+                'rest_response_filter_hook'   => 'myplugin_rest_response_filter',
+                'rest_permission_filter_hook' => 'myplugin_rest_permission_filter',
                 'middleware' => [],
                 'routes-dir' => ABSPATH . 'wp-content/plugins/my-plugin/routes'
-            ];
+            ] );
 
             parent::boot();
         }
     }
-
-	```
-
-7. (Optional) You can define global hooks to intercept REST API responses and permissions across all routes. Add these to your `$properties` array:
-
-	```php
-	parent::$properties = [
-	    'rest'       => [
-	        'namespace' => 'myplugin',
-	        'versions'  => ['v1']
-	    ],
-	    'ajax'       => [
-	        'namespace' => 'myplugin',
-	        'versions'  => []
-	    ],
-	    // Global hooks (optional)
-	    'rest_response_action_hook'   => 'myplugin_rest_response_action',
-	    'rest_response_filter_hook'   => 'myplugin_rest_response_filter',
-	    'rest_permission_filter_hook' => 'myplugin_rest_permission_filter',
-	    'middleware' => [],
-	    'routes-dir' => ABSPATH . 'wp-content/plugins/my-plugin/routes'
-	];
 	```
 	
 	*   `rest_response_action_hook`: Fires an action before the response is returned. Passes `WP_REST_Request $request` and `string $final_route`.

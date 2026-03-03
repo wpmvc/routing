@@ -106,7 +106,7 @@ class RouteIntegrationTest extends WP_UnitTestCase
         $data_binder->set_namespace( 'wpmvc' );
         $this->container->set( DataBinder::class, $data_binder );
         
-        RouteServiceProvider::$container = $this->container;
+        RouteServiceProvider::set_container( $this->container );
     }
 
     /**

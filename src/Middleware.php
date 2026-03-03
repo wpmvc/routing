@@ -50,7 +50,7 @@ class Middleware {
         }
 
         if ( null === $wp_rest_request ) {
-            $wp_rest_request = RouteServiceProvider::$container->get( \WP_REST_Request::class );
+            $wp_rest_request = RouteServiceProvider::get_container()->get( \WP_REST_Request::class );
         }
 
         $pipes = [];

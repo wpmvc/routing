@@ -27,9 +27,48 @@ use Wp;
  */
 abstract class RouteServiceProvider
 {
-    public static $container;
+    /**
+     * The container instance.
+     *
+     * @var mixed
+     */
+    protected static $container;
 
+    /**
+     * The configuration properties.
+     *
+     * @var array
+     */
     protected static $properties;
+
+    /**
+     * Set the container instance.
+     *
+     * @param  mixed  $container
+     * @return void
+     */
+    public static function set_container( $container ): void {
+        static::$container = $container;
+    }
+
+    /**
+     * Get the container instance.
+     *
+     * @return mixed
+     */
+    public static function get_container() {
+        return static::$container;
+    }
+
+    /**
+     * Set the configuration properties.
+     *
+     * @param  array  $properties
+     * @return void
+     */
+    public static function set_properties( array $properties ): void {
+        static::$properties = $properties;
+    }
 
     /**
      * Bootstrap the routing service.

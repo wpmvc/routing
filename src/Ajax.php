@@ -176,7 +176,7 @@ class Ajax extends Route {
         $wp_rest_request->set_headers( $wp_rest_server->get_headers( wp_unslash( $_SERVER ) ) );
         $wp_rest_request->set_body( $wp_rest_server->get_raw_data() );
 
-        RouteServiceProvider::$container->set( \WP_REST_Request::class, $wp_rest_request );
+        RouteServiceProvider::get_container()->set( \WP_REST_Request::class, $wp_rest_request );
 
         return $wp_rest_request;
     }

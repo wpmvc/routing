@@ -244,7 +244,7 @@ class Route
     protected static function register_with_wordpress_rest( PendingRoute $route ) {
         $details = $route->get_details();
         
-        $data_binder = RouteServiceProvider::$container->get( DataBinder::class );
+        $data_binder = RouteServiceProvider::get_container()->get( DataBinder::class );
         $namespace   = $data_binder->get_namespace();
         
         $callback    = $details['callback'];
@@ -257,7 +257,7 @@ class Route
                 [
                     'methods'             => $method,
                     'callback'            => function( WP_REST_Request $wp_rest_request ) use( $callback, $final_route ) {
-                        RouteServiceProvider::$container->set( WP_REST_Request::class, $wp_rest_request );
+                        RouteServiceProvider::get_container()->set( WP_REST_Request::class, $wp_rest_request );
 
                         $properties = RouteServiceProvider::get_properties();
 
@@ -302,10 +302,10 @@ class Route
      */
     protected static function callback( $callback ) {
         try {
-            $request = RouteServiceProvider::$container->get( \WP_REST_Request::class );
+            $request = RouteServiceProvider::get_container()->get( \WP_REST_Request::class );
             $params  = $request ? $request->get_url_params() : [];
 
-            $response = RouteServiceProvider::$container->call( $callback, $params );
+            $response = RouteServiceProvider::get_container()->call( $callback, $params );
 
             // If it's the structure from Response::send()
             if ( is_array( $response ) && isset( $response['status_code'] ) && array_key_exists( 'data', $response ) ) {
@@ -313,7 +313,7 @@ class Route
                 $data        = $response['data'];
                 
                 // If in REST context, wrap in WP_REST_Response to ensure status is respected
-                if ( class_exists( '\WP_REST_Response' ) && ( defined( 'REST_REQUEST' ) || RouteServiceProvider::$container->get( \WP_REST_Request::class ) ) ) {
+                if ( class_exists( '\WP_REST_Response' ) && ( defined( 'REST_REQUEST' ) || RouteServiceProvider::get_container()->get( \WP_REST_Request::class ) ) ) {
                     return new \WP_REST_Response( $data, $status_code );
                 }
 
@@ -403,7 +403,7 @@ class Route
             $route = static::format_route_regex( $route, $wheres ?? [] );
         }
 
-        $data_binder = RouteServiceProvider::$container->get( DataBinder::class );
+        $data_binder = RouteServiceProvider::get_container()->get( DataBinder::class );
         $namespace   = $data_binder->get_namespace();
         $version     = $data_binder->get_version();
 
