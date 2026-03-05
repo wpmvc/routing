@@ -9,6 +9,8 @@
 
 namespace WpMVC\Routing;
 
+use Exception;
+
 defined( 'ABSPATH' ) || exit;
 
 use WpMVC\Routing\Providers\RouteServiceProvider;
@@ -302,37 +304,24 @@ class Route
      */
     protected static function callback( $callback ) {
         try {
-            $request = RouteServiceProvider::get_container()->get( \WP_REST_Request::class );
-            $params  = $request ? $request->get_url_params() : [];
+            $response = RouteServiceProvider::get_container()->call($callback);
 
-            $response = RouteServiceProvider::get_container()->call( $callback, $params );
-
-            // If it's the structure from Response::send()
-            if ( is_array( $response ) && isset( $response['status_code'] ) && array_key_exists( 'data', $response ) ) {
-                $status_code = intval( $response['status_code'] );
-                $data        = $response['data'];
-                
-                // If in REST context, wrap in WP_REST_Response to ensure status is respected
-                if ( class_exists( '\WP_REST_Response' ) && ( defined( 'REST_REQUEST' ) || RouteServiceProvider::get_container()->get( \WP_REST_Request::class ) ) ) {
-                    return new \WP_REST_Response( $data, $status_code );
-                }
-
-                static::set_status_code( $status_code );
-                $data = $response['data'];
-            } else {
-                // Otherwise, treat the entire response as data with 200 status
-                $status_code = 200;
-                static::set_status_code( $status_code );
-                $data = $response;
+            if (!is_array($response) || !isset($response['status_code'])) {
+                return $response;
             }
+
+            $status_code = intval($response['status_code']);
+            $data        = $response['data'];
+
+            if (class_exists('WP_REST_Response')) {
+                return new \WP_REST_Response($data, $status_code);
+            }
+
+            static::set_status_code($status_code);
 
             return $data;
-
-        } catch ( \Exception $ex ) {
+        } catch (Exception $ex) {
             $status_code = intval( $ex->getCode() );
-            if ( $status_code < 100 || $status_code > 599 ) {
-                $status_code = 500;
-            }
             static::set_status_code( $status_code );
 
             $response = [
@@ -356,6 +345,9 @@ class Route
                 } else {
                     $response['message'] = 'Something went wrong.';
                 }
+            }
+            if (class_exists('WP_REST_Response')) {
+                return new \WP_REST_Response($response, $status_code);
             }
 
             return $response;
