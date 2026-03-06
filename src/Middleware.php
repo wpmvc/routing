@@ -11,7 +11,7 @@ namespace WpMVC\Routing;
 
 defined( 'ABSPATH' ) || exit;
 
-use WpMVC\Routing\Providers\RouteServiceProvider;
+use WP_REST_Request;
 use WP_Error;
 
 /**
@@ -40,19 +40,11 @@ class Middleware {
      * Executes the middleware chain through the Pipeline.
      *
      * @param array                 $middleware         The names of middleware to execute.
-     * @param \WP_REST_Request|null $wp_rest_request    The current request instance.
+     * @param WP_REST_Request $wp_rest_request    The current request instance.
      * @param bool                  $default_permission The default permission if no middleware fails.
      * @return bool|WP_Error Returns true if allowed, false if forbidden, or a WP_Error on failure.
      */
-    public static function is_user_allowed( array $middleware, $wp_rest_request = null, bool $default_permission = true ) {
-        if ( null !== $wp_rest_request && ! $wp_rest_request instanceof \WP_REST_Request ) {
-             return false;
-        }
-
-        if ( null === $wp_rest_request ) {
-            $wp_rest_request = RouteServiceProvider::get_container()->get( \WP_REST_Request::class );
-        }
-
+    public static function is_user_allowed( array $middleware, WP_REST_Request $wp_rest_request, bool $default_permission = true ) {
         $pipes = [];
 
         foreach ( $middleware as $name ) {

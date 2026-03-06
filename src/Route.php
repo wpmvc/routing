@@ -9,13 +9,13 @@
 
 namespace WpMVC\Routing;
 
-use Exception;
-
 defined( 'ABSPATH' ) || exit;
 
 use WpMVC\Routing\Providers\RouteServiceProvider;
 use WP_Error;
+use Exception;
 use WP_HTTP_Response;
+use WP_REST_Response;
 use WP_REST_Request;
 
 /**
@@ -273,16 +273,15 @@ class Route
 
                         return static::callback( $callback );
                     },
-                    'permission_callback' => function( \WP_REST_Request $wp_rest_request ) use( $middleware, $final_route ) {
+                    'permission_callback' => function( WP_REST_Request $wp_rest_request ) use( $middleware, $final_route ) {
                         $permission = Middleware::is_user_allowed( $middleware, $wp_rest_request );
-
                         $properties = RouteServiceProvider::get_properties();
 
                         if ( ! empty( $properties['rest_permission_filter_hook'] ) ) {
                             $permission = apply_filters( $properties['rest_permission_filter_hook'], $permission, $middleware, $final_route );
                         }
 
-                        if ( $permission instanceof \WP_Error ) {
+                        if ( $permission instanceof WP_Error ) {
                             $data   = $permission->get_error_data();
                             $status = isset( $data['status'] ) ? $data['status'] : 500;
                             static::set_status_code( (int) $status );
@@ -304,25 +303,18 @@ class Route
      */
     protected static function callback( $callback ) {
         try {
-            $response = RouteServiceProvider::get_container()->call($callback);
+            $response = RouteServiceProvider::get_container()->call( $callback );
 
-            if (!is_array($response) || !isset($response['status_code'])) {
+            if ( ! is_array( $response ) || ! isset( $response['status_code'] ) ) {
                 return $response;
             }
 
-            $status_code = intval($response['status_code']);
+            $status_code = intval( $response['status_code'] );
             $data        = $response['data'];
 
-            if (class_exists('WP_REST_Response')) {
-                return new \WP_REST_Response($data, $status_code);
-            }
-
-            static::set_status_code($status_code);
-
-            return $data;
-        } catch (Exception $ex) {
+            return new WP_REST_Response( $data, $status_code );
+        } catch ( Exception $ex ) {
             $status_code = intval( $ex->getCode() );
-            static::set_status_code( $status_code );
 
             $response = [
                 'data' => [
@@ -346,11 +338,8 @@ class Route
                     $response['message'] = 'Something went wrong.';
                 }
             }
-            if (class_exists('WP_REST_Response')) {
-                return new \WP_REST_Response($response, $status_code);
-            }
 
-            return $response;
+            return new WP_REST_Response( $response, $status_code );
         }
     }
 

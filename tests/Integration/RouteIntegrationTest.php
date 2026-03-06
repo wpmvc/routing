@@ -38,6 +38,12 @@ class RouteIntegrationTest extends WP_UnitTestCase
                 $this->instances[$id] = $instance; }
 
             public function call( $callback, array $args = [] ) { 
+                if ( empty( $args ) ) {
+                    $request = $this->instances['WP_REST_Request'] ?? null;
+                    if ( $request instanceof \WP_REST_Request ) {
+                        $args = $request->get_params();
+                    }
+                }
                 if ( is_array( $callback ) ) {
                     $class  = is_object( $callback[0] ) ? $callback[0] : $this->get( $callback[0] );
                     $method = $callback[1];
@@ -204,7 +210,6 @@ class RouteIntegrationTest extends WP_UnitTestCase
         $data = $response->get_data();
         
         // We need to verify that Route::callback is actually passing parameters to the container.
-        // Currently it's NOT. This test is expected to FAIL until we update Route.php.
         $this->assertEquals( '10', $data['1'], "First parameter (post_id) should be '10'" );
         $this->assertEquals( '20', $data['2'], "Second parameter (comment_id) should be '20'" );
     }
