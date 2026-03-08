@@ -8,4 +8,4 @@
 
 A powerful and flexible routing system for WordPress plugins, featuring a fluent interface for REST API and custom AJAX routing. It brings modern routing capabilities like middleware, groups, and resource controllers to the WordPress ecosystem.
 
-For a full list of available features and detailed usage guides, please refer to the [Routing Documentation](https://wpmvc.com/docs/routing/getting-started).
+For a full list of available features and detailed usage guides, please refer to the [Routing Documentation](https://wpmvc.com/docs/routing).
