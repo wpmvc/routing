@@ -1,4 +1,11 @@
 <?php
+/**
+ * Route service provider for bootstrapping the routing system.
+ *
+ * @package WpMVC\Routing\Providers
+ * @author  WpMVC
+ * @license MIT
+ */
 
 namespace WpMVC\Routing\Providers;
 
@@ -7,26 +14,81 @@ defined( 'ABSPATH' ) || exit;
 use WpMVC\Routing\Response;
 use WpMVC\Routing\DataBinder;
 use WpMVC\Routing\Ajax;
+use WpMVC\Routing\Route;
 use WpMVC\Routing\Middleware;
 use Wp;
 
+/**
+ * Class RouteServiceProvider
+ *
+ * Handles the registration of REST and AJAX routes with WordPress hooks.
+ *
+ * @package WpMVC\Routing\Providers
+ */
 abstract class RouteServiceProvider
 {
-    public static $container;
+    /**
+     * The container instance.
+     *
+     * @var mixed
+     */
+    protected static $container;
 
+    /**
+     * The configuration properties.
+     *
+     * @var array
+     */
     protected static $properties;
 
-    public function boot() {
+    /**
+     * Set the container instance.
+     *
+     * @param  mixed  $container
+     * @return void
+     */
+    public static function set_container( $container ): void {
+        static::$container = $container;
+    }
+
+    /**
+     * Get the container instance.
+     *
+     * @return mixed
+     */
+    public static function get_container() {
+        return static::$container;
+    }
+
+    /**
+     * Set the configuration properties.
+     *
+     * @param  array  $properties
+     * @return void
+     */
+    public static function set_properties( array $properties ): void {
+        static::$properties = $properties;
+    }
+
+    /**
+     * Bootstrap the routing service.
+     *
+     * Registers actions for both REST API and general request parsing (AJAX).
+     *
+     * @return void
+     */
+    public function boot(): void {
         add_action( 'rest_api_init', [$this, 'action_rest_api_init'] );
         add_action( 'parse_request', [$this, 'action_ajax_api_init'], 1 );
     }
 
     /**
-     * Fires once all query variables for the current request have been parsed.
+     * Initialize AJAX routes during request parsing.
      *
-     * @param WP $wp Current WordPress environment instance (passed by reference).
+     * @param WP $wp Current WordPress environment instance.
+     * @return void
      */
-    public function action_ajax_api_init( WP $wp ) {
+    public function action_ajax_api_init( WP $wp ): void {
         if ( ! isset( $wp->request ) || 1 !== preg_match( "@^" . static::$properties['ajax']['namespace'] . "/(.*)/?@i", $wp->request ) ) {
             return;
         }
@@ -47,17 +109,30 @@ abstract class RouteServiceProvider
     }
 
     /**
-     * Fires when preparing to serve a REST API request.
+     * Initialize REST API routes.
+     * 
+     * @return void
      */
     public function action_rest_api_init(): void {
         static::init_routes( 'rest' );
     }
 
-    public static function get_properties() {
-        return static::$properties;
+    /**
+     * Retrieve the current configuration properties.
+     *
+     * @return array
+     */
+    public static function get_properties(): array {
+        return static::$properties ?? [];
     }
 
-    protected static function init_routes( string $type ) {
+    /**
+     * Scan and initialize route files.
+     *
+     * @param string $type The routing context ('rest' or 'ajax').
+     * @return void
+     */
+    protected static function init_routes( string $type ): void {
         Middleware::set_middleware_list( static::$properties['middleware'] );
 
         $data_binder = static::$container->get( DataBinder::class );
@@ -78,6 +153,12 @@ abstract class RouteServiceProvider
                     include $version_file;
                 }
             }
+        }
+
+        if ( 'rest' === $type ) {
+            Route::register_all( 'rest' );
+        } else {
+            Ajax::register_all( 'ajax' );
         }
     }
 }
